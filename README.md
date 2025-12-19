@@ -1,4 +1,4 @@
-# Environmental Sound Classification on ESC-50 (PyTorch)
+# Audio Sound Classification on ESC-50 (PyTorch)
 
 End-to-end deep learning project for **environmental sound classification** using the ESC-50 dataset.  
 The project implements a customized **ResNet-18 CNN** trained on **log-mel spectrograms**, achieving **99.33% test accuracy** through extensive data augmentation and careful model optimization.
@@ -92,11 +92,11 @@ The CNN architecture provided excellent generalization without the overhead of t
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/YehonatanRavoach/environmental-sound-classification-esc50.git
+git clone https://github.com/YehonatanRavoach/audio-sound-classification-esc50.git
 cd ESC50-DeepLearning
 ```
 2. Install required packages:
-   ```bash
+```bash
    torch>=2.0
    torchvision>=0.15
    numpy>=1.24
@@ -108,7 +108,7 @@ cd ESC50-DeepLearning
    scikit-learn>=1.2
 ```
 3. Download the ESC-50 dataset:
-   ```bash
+```bash
    python download_data.py
 ```
 4. Run the notebooks in order:
@@ -139,4 +139,5 @@ project-root/
 * Model evaluation & validation
 * Experimental analysis
 * End-to-end ML pipeline design
+
 
