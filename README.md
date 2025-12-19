@@ -1,99 +1,100 @@
-# ESC-50 Environmental Sound Classification 🎵
+# Environmental Sound Classification on ESC-50 (PyTorch)
 
-This project implements deep learning classification on the [ESC-50 dataset](https://github.com/karolpiczak/ESC-50) for environmental sound recognition, leveraging a customized **ResNet-18-based CNN** architecture.
-
-We focus on building a full, scalable pipeline — from EDA and data preprocessing to model training, evaluation, and performance analysis.
-
----
-
-## 📁 Project Structure
-project-root/   
-│── notebooks/   
-│ ├── 01_EDA.ipynb              # Exploratory Data Analysis  
-│ ├── 02_Preprocessing.ipynb    # Data preparation, augmentation, feature engineering   
-│ ├── 03_Modeling.ipynb         # CNN modeling, training, evaluation    
-│ │── config.py                 # Centralized configuration file    
-│── download_data.py            # Script to download the ESC-50 dataset     
-│── README.md                   # Project documentation    
-│── .gitignore  
-
+End-to-end deep learning project for **environmental sound classification** using the ESC-50 dataset.  
+The project implements a customized **ResNet-18 CNN** trained on **log-mel spectrograms**, achieving **99.33% test accuracy** through extensive data augmentation and careful model optimization.
 
 ---
 
-## 🚀 Project Overview
+## Project Overview
 
-Environmental Sound Classification is a complex task due to high variability in natural and human-made sounds.  
-Our goal is to build a **high-accuracy deep learning model** for classifying 50 sound classes grouped into 5 broad categories.
+Environmental sound classification is a challenging task due to high intra-class variability and noise in real-world audio signals.  
+This project focuses on building a **robust and scalable deep learning pipeline** for classifying **50 environmental sound classes**, grouped into 5 high-level categories.
 
-We implement a **ResNet-18** model adapted for single-channel spectrograms and optimize it through careful preprocessing and data augmentation.
+The pipeline covers the full machine learning lifecycle:
+- Exploratory Data Analysis (EDA)
+- Audio preprocessing and feature extraction
+- Data augmentation
+- Model training and evaluation
+- Performance analysis and validation
 
 ---
 
-## 🛠️ Key Components
+## Dataset
+
+The project uses the **ESC-50 dataset**, a labeled benchmark dataset containing:
+- 2,000 audio recordings
+- 50 sound classes (e.g., dog bark, rain, siren)
+- 5-second WAV clips
+- Balanced class distribution
+
+Dataset source:  
+https://github.com/karolpiczak/ESC-50
+
+---
+
+## Pipeline & Methodology
 
 ### 1. Exploratory Data Analysis (EDA)
+- Verified class balance across all 50 categories
+- Validated audio duration consistency (~5 seconds)
+- Visualized raw waveforms and mel-spectrograms
+- Analyzed spectral characteristics (energy, spectral centroid)
 
-- Analyzed dataset distribution: 50 balanced.
-- Verified audio file integrity and durations (all ~5 seconds).
-- Visualized waveforms and mel-spectrograms for understanding sound patterns.
-- Extracted features such as **energy**, **tone** (spectral centroid), and grouped sounds accordingly.
+### 2. Preprocessing & Feature Engineering
+- Converted raw audio signals into **log-mel spectrograms**
+- Applied padding, normalization, and resizing to **128×128**
+- Cached preprocessed features for efficient reuse
+- Implemented extensive **data augmentation**:
+  - Gaussian noise injection
+  - Time stretching
+  - Pitch shifting
 
-### 2. Preprocessing
-
-- **Generated log-mel spectrograms** from raw `.wav` audio files.
-- **Padded**, **normalized**, and **resized** spectrograms to a standard size (128x128).
-- **Data Augmentation**:  
-  - Added Gaussian noise,  
-  - Applied time-stretching,  
-  - Performed pitch shifting.
-- Saved preprocessed data for faster reloading and reusability.
-
-### 3. Modeling
-
-- **Model Architecture**:  
-  - Base model: **ResNet-18** pretrained weights.
-  - Modified first convolution layer to accept single-channel inputs.
-  - Replaced the final fully-connected layer for 50-class classification.
-- **Training Setup**:  
-  - Optimizer: Adam  
-  - Loss: CrossEntropyLoss  
-  - Batch size: 64  
-  - Early stopping and loss monitoring.
-- **Training Phases**:
-  - Trained on the original dataset.
-  - Retrained on an augmented (expanded) dataset (~4x original size).
+### 3. Modeling & Training
+- **Architecture**:
+  - Base model: ResNet-18 (CNN)
+  - Adapted first convolution layer for single-channel input
+  - Replaced final fully connected layer for 50-class classification
+- **Training setup**:
+  - Optimizer: Adam
+  - Loss function: CrossEntropyLoss
+  - Batch size: 64
+  - Early stopping and loss monitoring
+- **Dataset split**:
+  - Training / validation / test split
+  - Test set kept fully isolated to prevent data leakage
 
 ---
 
-## 📊 Results
+## Results
 
-| Dataset           | Total Samples | Train Samples | Validation Samples | Test Samples | Train Acc | Val Acc | Test Acc |
-|:------------------|:--------------:|:-------------:|:------------------:|:------------:|:---------:|:-------:|:--------:|
-| Original          | 2000           | 1190          | 510                | 300          | 97.56%    | 66.27%  | -        |
-| Original + Augmented | 8143        | 6921          | 1222               | 300          | 97.20%    | 98.28%  | **99.33%** |
+| Dataset | Total Samples | Train | Validation | Test | Train Acc | Val Acc | Test Acc |
+|-------|---------------|-------|------------|------|-----------|---------|----------|
+| Original | 2,000 | 1,190 | 510 | 300 | 97.56% | 66.27% | — |
+| Original + Augmented | 8,143 | 6,921 | 1,222 | 300 | 97.20% | 98.28% | **99.33%** |
 
-✅ Final model achieved **99.33% accuracy** on the test set!
-
----
-
-## 🧠 Why Not Use Vision Transformers (ViT)?
-
-Although Vision Transformers could be considered, we decided against them because:
-- Limited computational resources.
-- The dataset is relatively small (only ~2,000 original samples).
-- Audio clips are short (~5 sec), making long-term context modeling unnecessary.
-- Our ResNet-18-based CNN already achieved excellent results.
+Final model achieved **99.33% accuracy on the test set**, with strict separation between training and evaluation data to avoid leakage.
 
 ---
 
-## 📦 Installation
+## Design Decisions: Why CNN and Not Transformers?
 
-To run the project locally:
+Although Vision Transformers (ViT) were considered, a CNN-based approach was selected due to:
+- Limited dataset size (2,000 original samples)
+- Short audio duration (~5 seconds)
+- Lower computational cost
+- Superior empirical performance using ResNet-18
+
+The CNN architecture provided excellent generalization without the overhead of transformer-based models.
+
+---
+
+## How to Run
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/YehonatanRavoach/ESC50-DeepLearning.git
-   cd ESC50-DeepLearning
+```bash
+git clone https://github.com/YehonatanRavoach/environmental-sound-classification-esc50.git
+cd ESC50-DeepLearning
+```
 2. Install required packages:
    ```bash
    torch>=2.0
@@ -105,12 +106,37 @@ To run the project locally:
    seaborn>=0.12
    opencv-python>=4.7
    scikit-learn>=1.2
-
-4. Download the ESC-50 dataset:
+```
+3. Download the ESC-50 dataset:
    ```bash
    python download_data.py
-6. Run the notebooks step-by-step inside the notebooks/ folder.
+```
+4. Run the notebooks in order:
+  * 01_EDA.ipynb
+  * 02_Preprocessing.ipynb
+  * 03_Modeling.ipynb
 
+## 📁 Project Structure
+```bash
+project-root/
+│── notebooks/
+│   ├── 01_EDA.ipynb
+│   ├── 02_Preprocessing.ipynb
+│   ├── 03_Modeling.ipynb
+│   └── config.py
+│── download_data.py
+│── README.md
+│── .gitignore
+```
 
-
+## Technologies & Skills Demonstrated
+* Python
+* PyTorch
+* Convolutional Neural Networks (CNN)
+* Audio signal processing
+* Log-mel spectrograms
+* Data augmentation
+* Model evaluation & validation
+* Experimental analysis
+* End-to-end ML pipeline design
 
